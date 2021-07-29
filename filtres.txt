@@ -1,0 +1,64 @@
+from myapp.models import Personne
+from myapp.filters import FpersFilter
+from . import filters
+
+views.py
+def index(request):
+    personnes=Personne.objects.all()
+    filter = FpersFilter(request.GET, queryset=personnes)
+    return render(request,'jeux/index1.html',{'filter':filter})
+	
+	
+pip install django-filter
+
+puis ajourt dans setttings : django_filters
+
+	
+
+
+filters.py
+import django_filters
+from .models import Personne,Produit
+
+class FpersFilter(django_filters.FilterSet):
+    nom = django_filters.CharFilter(field_name='nom',lookup_expr='contains')
+
+    class Meta:
+        model = Personne
+        fields = '__all__'
+		
+
+index.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+          <form method="get">
+           {{ filter.form.as_p }}
+            <div class="row justify-content-center">
+                <button type='submit' class='btn btn-secondary'>Search</button> 
+            </div>
+
+    <table id ="personnes" class ="table table-bordered table-stripped table-sm">
+        <thead>
+            <th>Nom</th>
+            <th>Prenom</th>
+        </thead>
+        <tbody>
+            {% for personne in filter.qs %}
+                <tr>
+                    <td>{{personne.nom}}</td>
+                    <td>{{personne.prenom}}</td>
+                </tr>
+            {% endfor %}
+
+        </tbody>
+    </table>
+
+</body>
+</html>

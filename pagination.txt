@@ -1,0 +1,5 @@
+from django.core.paginator import Paginator
+
+def index(request):
+	personnes= Personne.objects.all()
+	paginator= Paginator(personnes,2)

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
+
+</head>
+<body>
+<h3>Book list</h3>
+<p>{{wdate|date:"d F Y H:i:s"}}</p>
+    <ul class = "pagination justify-content-end">
+        <li class="page-item"><a href="#" class ="page-link">Prev</a></li>
+        <li class="page-item"><a href="#" class="page-link">1</a></li>
+        <li class="page-item"><a href="#" class="page-link">2</a></li>
+        <li class="page-item"><a href="#" class="page-link">3</a></li>
+        <li class="page-item"><a href="#" class="page-link">Next</a></li>
+    </ul>
+    <div class ="container">
+        <table class="table table-bordered table-sm table-striped">
+            <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Prenom</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                {% for personne in pers %}
+                <tr>
+                    <td>{{ personne.nom }}</td>
+                    <td>{{ personne.prenom }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% comment %} debut pagination {% endcomment %}
+        {% comment %} <ul class="pagination">
+            {% if personnes.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{personnes.previous_page_number}}">Previous</a>
+                </li>
+            {% endif%}
+            {% for page_num in personnes.paginator.page_range %}
+                {% if personnes.number == page_num%}
+                    <li class="page-item active">{{page_num}}</li>
+                {% else %}
+                    <li class="page-item">
+                        {{page_num}}
+                        <a class ="page-link" href="?page={{page_num}}"></a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+            {% if personnes.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{personnes.next_page_number}}">Next</a>
+                </li>
+            {% endif%}
+
+        </ul> {% endcomment %}
+        {% comment %} end pagination  {% endcomment %}
+    </div>
+    {{pers.has_next}}
+    {{pers.has_previous}}
+    {{pers.number}}
+    {{pers.paginator.num_pages}}
+    <p>{{pers.paginator.page_range}}</p>
+    <ul class = "pagination">
+        {% if pers.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{pers.previous_page_number}}"><<</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ pers.previous_page_number }}">
+                    {{ pers.previous_page_number }}
+                </a>
+            </li>
+        {% else %}
+            <li class="page-item disabled">
+                <span class="page-link"><<</span>
+            </li>
+        {% endif %}
+        <li class="page-item active">
+            <span class="page-link">{{ pers.number }}</span>
+        </li>
+
+        {% comment %} {% for i in pers.paginator.page_range %}
+            {% if i <= pers.number|add:5 and i >= pers.number|add:-5 %}
+                {% if pers.number == i %}
+                    <li class="page-item active">
+                        <span class="page-link">{{ pers.number }}</span>
+                    </li>
+                {% else %}
+                <a class ="page-link" href="{{ base_url }}?page={{ i }}">{{ i }}</a></li>
+                {%endif%}
+            {%endif%}
+        {% endfor %} {% endcomment %}
+        {% if pers.has_next %}
+             <li class="page-item">
+                <a class="page-link" href="?page={{ pers.next_page_number }}">
+                    {{ pers.next_page_number }}
+                </a>
+            </li> 
+            <li class="page-item ">
+                <a class="page-link" href="?page={{ pers.next_page_number }}">>></a>
+            </li>
+        {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">>></span>
+            </li>
+        {% endif %}
+    </ul>
+
+
+    {% comment %}  {% endcomment %}
+<nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+        <li class="page-item {% if not pers.has_previous %} disabled {% endif %}">
+            <a class="page-link" href="?page=1" tabindex="-1">FIRST</a>
+        </li>
+        <li class="page-item {% if not pers.has_previous %} disabled {% endif %}">
+            <a class="page-link" href="{% if pers.has_previous %}?page={{pers.previous_page_number }}{% endif %} " tabindex="-1">Previous</a>
+        </li>
+        {% if page_obj.number|add:'-2' > 1 %}
+            <li class="page-item disabled"><a class="page-link" href="?page={{ pers.number|add:'-3' }}">&hellip;</a></li>
+        {% endif %}
+        {% for i in pers.paginator.page_range %}
+            {% if pers.number == i %}
+                <li class="active page-item "><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+            {% elif i > pers.number|add:'-3' and i < pers.number|add:'3' %}
+                <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+            {% endif %}
+        {% endfor %}
+        {% if pers.paginator.num_pages > pers.number|add:'2' %}
+            <li class="page-item disabled"><a class="page-link" href="?page={{pers.number|add:'3' }}">&hellip;</a></li>
+        {% endif %}
+        <li class="page-item {% if not pers.has_next %} disabled {% endif %}">
+            <a class="page-link" href="{% if pers.has_next %} ?page={{ pers.next_page_number }} {% endif %}">Next</a>
+        </li>
+        <li class="page-item {% if not pers.has_next %} disabled {% endif %}">
+            <a class="page-link" href="{% if pers.has_next %} ?page={{ pers.paginator.num_pages }}  {% endif %}">LAST</a>
+        </li>
+    </ul>
+</nav>
+
+</body>
+</html>
