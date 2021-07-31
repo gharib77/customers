@@ -8,3 +8,8 @@ class FpersFilter(django_filters.FilterSet):
     class Meta:
         model = Personne
         fields = '__all__'
+
+class PersonneFilter(django_filters.FilterSet):
+    class Meta:
+        model = Personne
+        fields = ['nom']

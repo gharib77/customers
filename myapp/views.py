@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import MvtForm
 
 from myapp.models import Personne
-from myapp.filters import FpersFilter
+from myapp.filters import FpersFilter,PersonneFilter
 from myapp.forms import FormPers
 from datetime import datetime,date
 #from . import filters
@@ -22,8 +22,8 @@ def index(request):
     nom="driss"
     print(f"la multiplicatio de {a} par {b} est: {a*b}")
     print("mon ami {} a {} ans".format(request.user.prenom,age))
-    wdate1= datetime.date.today().strftime("%d/%m/%Y")
-    wdate2= datetime.datetime.now()
+    wdate1= date.today().strftime("%d/%m/%Y")
+    wdate2= datetime.now()
     all_var={'nom':"azzouz",'prenom':'jouali','age':25}
     form=MvtForm( all_var,user=request.user)
     #print(request.user.prenom)
@@ -72,19 +72,21 @@ def listpage(request):
     wdate1=date.today()
     print(wdate1)
     personnes= Personne.objects.all()
-
-    paginator=Paginator(personnes,10)
+    #filter data
+    myfilter = PersonneFilter(request.GET,queryset=personnes)
+    personnes=myfilter.qs
+    paginator=Paginator(personnes,3)
     page=request.GET.get('page')
-    pers=paginator.get_page(page)
+    #pers=paginator.get_page(page)
     
-    """     try:
-            personnes=paginator.page(page)
-        except PageNotAnInteger:
-            personnes=paginator.page(1)
-        except EmptyPage:
-            personnes=paginator.page(paginator.num_pages)
-    """    
-    context={'personnes':personnes,'wdate':wdate,'pers':pers}
+    try:
+        pers=paginator.page(page)
+    except PageNotAnInteger:
+        pers=paginator.page(1)
+    except EmptyPage:
+        pers=paginator.page(paginator.num_pages)
+       
+    context={'personnes':personnes,'wdate':wdate,'pers':pers,'myfilter':myfilter}
     return render(request,'myapp/listpage.html',context)
 def listpage1(request):
     context = {
